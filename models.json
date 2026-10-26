@@ -1,0 +1,62 @@
+[
+  {
+    "id": "animatediff",
+    "name": "AnimateDiff (Local Core)",
+    "type": "video-generation",
+    "requires_manual_download": false,
+    "weight_path_hint": "models/animatediff",
+    "description": "Local motion-based diffusion pipeline; best for lightweight generation and iterative testing.",
+    "supported": true,
+    "requires_gpu": true,
+    "requires_auth": false,
+    "download_url": null
+  },
+  {
+    "id": "svd-xt",
+    "name": "Stable Video Diffusion (SVD-XT)",
+    "type": "video-generation",
+    "requires_manual_download": false,
+    "weight_path_hint": "models/svd-xt",
+    "description": "Stable diffusion image-to-video workflow optimized for locally managed checkpoints.",
+    "supported": true,
+    "requires_gpu": true,
+    "requires_auth": false,
+    "download_url": null
+  },
+  {
+    "id": "cogvideox",
+    "name": "CogVideoX",
+    "type": "video-generation",
+    "requires_manual_download": true,
+    "weight_path_hint": "models/cogvideox",
+    "description": "Advanced local text-to-video pipeline. Requires local checkpoint installation and compatible hardware.",
+    "supported": false,
+    "requires_gpu": true,
+    "requires_auth": false,
+    "download_url": null
+  },
+  {
+    "id": "wan-2.1",
+    "name": "Wan 2.1 (Manual Local Install)",
+    "type": "video-generation",
+    "requires_manual_download": true,
+    "weight_path_hint": "models/wan-2.1",
+    "description": "High-end local generation model. Requires manual installation of official weights and compatible GPU runtime.",
+    "supported": false,
+    "requires_gpu": true,
+    "requires_auth": false,
+    "download_url": null
+  },
+  {
+    "id": "custom-ffmpeg",
+    "name": "Custom Pipeline (FFmpeg Script)",
+    "type": "render-pipeline",
+    "requires_manual_download": false,
+    "weight_path_hint": "custom/ffmpeg",
+    "description": "Pure local render pipeline using FFmpeg and procedural animation for working offline generation.",
+    "supported": true,
+    "requires_gpu": false,
+    "requires_auth": false,
+    "download_url": null
+  }
+]

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LOCAL AI VIDEO STUDIO v1.5</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">◈</div>
+        <h1>LOCAL AI VIDEO STUDIO v1.5</h1>
+      </div>
+      <div class="status-indicator">
+        <span class="pulse"></span>
+        OFFLINE MODE / 100% PRIVATE
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="panel">
+        <div class="panel-header">Logic Configuration</div>
+
+        <label for="modelSelect">Model Selector</label>
+        <select id="modelSelect"></select>
+
+        <label for="sceneDuration">Scene Duration</label>
+        <div class="slider-row">
+          <input id="sceneDuration" type="range" min="4" max="60" value="18" />
+          <span class="scene-badge" id="sceneDurationValue">18s</span>
+        </div>
+
+        <label for="totalDurationInput">Target Total Duration</label>
+        <input id="totalDurationInput" type="text" value="120" />
+
+        <div class="duration-meta">
+          <span>Target minutes</span>
+          <span id="durationSecondsLabel">7200 seconds</span>
+        </div>
+      </aside>
+
+      <section class="panel">
+        <div class="panel-header">Script Ingestion &amp; Chunking Core</div>
+
+        <textarea id="scriptInput" spellcheck="false">In the quiet hours before sunrise, a lone drone glides over a forgotten city. The skyline breathes with static light, and faint reflections shimmer across the rooftops. A hidden signal awakens beneath the pavement, revealing an ancient pulse that has been dormant for centuries.
+
+A young archivist follows the cracked echo through an abandoned transit tunnel. Each turn of the corridor reveals a newly restored mural, painted in layers of gold and memory. Slowly, the city transforms from ruin to living archive, as if the past is remembering itself.
+
+At the center of the district, a suspended platform opens above the streets. The light blooms into a geometric lattice, and the drone rises with the chorus of reconstructed voices. The final sequence moves through dawn, over bridges, plazas, and rooftop gardens, ending in a wide cinematic reveal of a city reborn in silence.</textarea>
+
+        <button class="button-primary" id="generateBtn">Generate Video Timeline Structure</button>
+
+        <div class="progress-wrap">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <span class="progress-text" id="progressText">0%</span>
+        </div>
+
+        <div class="terminal" id="terminalLog"></div>
+      </section>
+
+      <aside class="panel">
+        <div class="panel-header">Inline Browser Preview &amp; Download</div>
+
+        <div class="video-stage">
+          <video id="videoPreview" controls playsinline></video>
+        </div>
+
+        <button class="download-btn" id="downloadBtn">Download Compiled Video File</button>
+
+        <div class="timeline-panel">
+          <h3>Generated Timeline</h3>
+          <div id="timelineList"></div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
