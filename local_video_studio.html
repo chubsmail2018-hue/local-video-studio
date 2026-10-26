@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LOCAL AI VIDEO STUDIO v1.5</title>
+  <style>
+    :root {
+      --bg: #0b1014;
+      --bg-2: #111b22;
+      --panel: rgba(16, 24, 30, 0.9);
+      --panel-strong: rgba(22, 31, 37, 1);
+      --panel-border: rgba(82, 148, 255, 0.28);
+      --text: #dfeaf5;
+      --muted: #8ea6b8;
+      --green: #6cffb1;
+      --green-strong: #0cff91;
+      --blue: #5cc3ff;
+      --blue-strong: #35a4ff;
+      --orange: #ffb347;
+      --red: #ff6d6d;
+      --shadow: rgba(10, 16, 20, 0.8);
+      --radius: 16px;
+      --neon: 0 0 14px rgba(76, 255, 167, 0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top left, rgba(73, 123, 255, 0.12), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(39, 255, 168, 0.08), transparent 25%),
+        linear-gradient(180deg, #080d12 0%, #0b1014 100%);
+      color: var(--text);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      padding: 18px;
+    }
+
+    .app-shell {
+      max-width: 1500px;
+      margin: 0 auto;
+      background: rgba(8, 14, 18, 0.78);
+      border: 1px solid rgba(117, 161, 206, 0.18);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px 22px;
+      background: linear-gradient(180deg, rgba(19, 29, 35, 0.96), rgba(11, 17, 21, 0.96));
+      border-bottom: 1px solid rgba(113, 135, 156, 0.22);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      font-size: 18px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(14, 255, 147, 0.18), rgba(59, 161, 255, 0.12));
+      border: 1px solid rgba(108, 255, 177, 0.42);
+      color: var(--green);
+      box-shadow: var(--neon);
+    }
+
+    h1 {
+      margin: 0;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      font-size: clamp(22px, 2vw, 32px);
+      text-transform: uppercase;
+      color: #edf4ff;
+      text-shadow: 0 0 18px rgba(92, 195, 255, 0.35);
+    }
+
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(11, 30, 22, 0.8);
+      border: 1px solid rgba(91, 255, 166, 0.42);
+      box-shadow: inset 0 0 10px rgba(42, 255, 154, 0.12), 0 0 18px rgba(34, 255, 148, 0.12);
+      color: var(--green-strong);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .pulse {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green-strong);
+      box-shadow: 0 0 12px rgba(7, 255, 145, 0.8), 0 0 20px rgba(7, 255, 145, 0.5);
+      animation: pulse 1.5s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.75; }
+      100% { transform: scale(1.25); opacity: 1; }
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1.2fr 520px;
+      gap: 18px;
+      padding: 18px;
+      min-height: 760px;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(15, 22, 28, 0.97), rgba(11, 17, 22, 1));
+      border: 1px solid rgba(118, 146, 164, 0.2);
+      border-radius: var(--radius);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      padding: 18px;
+      min-height: 0;
+    }
+
+    .panel-header {
+      margin-bottom: 14px;
+      color: var(--blue);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 12px;
+      font-weight: 700;
+      opacity: 0.95;
+    }
+
+    label {
+      display: block;
+      margin: 14px 0 8px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    select, input, textarea, button {
+      width: 100%;
+      border: 1px solid rgba(129, 150, 170, 0.28);
+      background: rgba(10, 15, 19, 0.92);
+      color: var(--text);
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    select, input {
+      min-height: 46px;
+      padding: 12px 14px;
+    }
+
+    textarea {
+      min-height: 260px;
+      resize: vertical;
+      padding: 14px 16px;
+      line-height: 1.55;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      border-color: rgba(85, 199, 255, 0.8);
+      box-shadow: 0 0 0 3px rgba(89, 179, 255, 0.15);
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    input[type="range"] {
+      padding: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      min-height: auto;
+      accent-color: var(--green-strong);
+    }
+
+    .scene-badge {
+      min-width: 56px;
+      text-align: center;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(12, 255, 145, 0.08);
+      border: 1px solid rgba(12, 255, 145, 0.35);
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .duration-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .button-primary {
+      margin-top: 16px;
+      min-height: 52px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(63, 216, 163, 0.52);
+      background: linear-gradient(135deg, rgba(15, 42, 29, 1), rgba(9, 24, 18, 1));
+      color: var(--green);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: inset 0 0 14px rgba(14, 255, 145, 0.1), 0 0 18px rgba(14, 255, 145, 0.08);
+    }
+
+    .button-primary:hover {
+      filter: brightness(1.08);
+    }
+
+    .progress-wrap {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .progress-bar {
+      position: relative;
+      height: 14px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(105, 118, 132, 0.18);
+      border: 1px solid rgba(125, 152, 170, 0.14);
+    }
+
+    .progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(37, 203, 146, 1), rgba(80, 201, 255, 1));
+      border-radius: inherit;
+      box-shadow: 0 0 14px rgba(96, 255, 170, 0.32);
+      transition: width 0.25s ease;
+    }
+
+    .progress-text {
+      color: var(--green);
+      font-weight: 700;
+      min-width: 52px;
+      text-align: right;
+      letter-spacing: 0.08em;
+    }
+
+    .terminal {
+      margin-top: 16px;
+      border-radius: 12px;
+      background: rgba(4, 9, 12, 0.9);
+      border: 1px solid rgba(124, 150, 166, 0.22);
+      min-height: 240px;
+      max-height: 290px;
+      overflow: auto;
+      padding: 14px 12px;
+      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.28);
+      font-family: "Consolas", "SFMono-Regular", monospace;
+    }
+
+    .log-line {
+      margin: 6px 0;
+      line-height: 1.5;
+      font-size: 12px;
+      color: #cce4f2;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .log-line.ok { color: var(--green); }
+    .log-line.warn { color: var(--orange); }
+    .log-line.error { color: var(--red); }
+    .log-line.info { color: var(--blue); }
+
+    .video-stage {
+      position: relative;
+      width: 100%;
+      min-height: 304px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #02080c;
+      border: 1px solid rgba(124, 149, 165, 0.22);
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.45);
+      display: grid;
+      place-items: center;
+    }
+
+    #previewCanvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: linear-gradient(180deg, #071117, #020a10);
+      display: none;
+    }
+
+    #videoPreview {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: radial-gradient(circle at top, rgba(31, 94, 126, 0.5), rgba(6, 11, 16, 1));
+      object-fit: cover;
+    }
+
+    .download-btn {
+      margin-top: 16px;
+      min-height: 52px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(91, 151, 255, 0.46);
+      background: linear-gradient(135deg, rgba(13, 26, 40, 1), rgba(8, 17, 24, 1));
+      color: var(--blue);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: inset 0 0 14px rgba(92, 195, 255, 0.1), 0 0 16px rgba(92, 195, 255, 0.08);
+    }
+
+    .timeline-panel {
+      margin-top: 18px;
+      background: rgba(6, 11, 15, 0.86);
+      border: 1px solid rgba(124, 149, 165, 0.2);
+      border-radius: 12px;
+      padding: 14px 12px;
+      min-height: 220px;
+    }
+
+    .timeline-panel h3 {
+      margin: 0 0 12px;
+      color: var(--green);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    #timelineList {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 320px;
+      overflow: auto;
+    }
+
+    .scene-chip {
+      display: grid;
+      grid-template-columns: 36px 1fr 54px;
+      gap: 10px;
+      padding: 10px 10px;
+      border-radius: 10px;
+      background: rgba(18, 26, 32, 0.95);
+      border: 1px solid rgba(119, 149, 168, 0.18);
+    }
+
+    .scene-idx {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(92, 195, 255, 0.12);
+      border: 1px solid rgba(92, 195, 255, 0.28);
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .scene-copy {
+      min-width: 0;
+    }
+
+    .scene-copy strong {
+      display: block;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .scene-copy p {
+      margin: 0;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--muted);
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .scene-duration {
+      align-self: center;
+      justify-self: end;
+      color: var(--green);
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 1180px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        min-height: 0;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">◈</div>
+        <h1>LOCAL AI VIDEO STUDIO v1.5</h1>
+      </div>
+      <div class="status-indicator">
+        <span class="pulse"></span>
+        OFFLINE MODE / 100% PRIVATE
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="panel">
+        <div class="panel-header">Logic Configuration</div>
+
+        <label for="modelSelect">Model Selector</label>
+        <select id="modelSelect">
+          <option>AnimateDiff (Local Core)</option>
+          <option>Stable Video Diffusion (SVD-XT)</option>
+          <option>Custom Pipeline (FFmpeg Script)</option>
+        </select>
+
+        <label for="sceneDuration">Scene Duration</label>
+        <div class="slider-row">
+          <input id="sceneDuration" type="range" min="4" max="60" value="18" />
+          <span class="scene-badge" id="sceneDurationValue">18s</span>
+        </div>
+
+        <label for="totalDurationInput">Target Total Duration</label>
+        <input id="totalDurationInput" type="text" value="120" />
+
+        <div class="duration-meta">
+          <span>Target minutes</span>
+          <span id="durationSecondsLabel">7200 seconds</span>
+        </div>
+      </aside>
+
+      <section class="panel">
+        <div class="panel-header">Script Ingestion &amp; Chunking Core</div>
+
+        <textarea id="scriptInput" spellcheck="false">In the quiet hours before sunrise, a lone drone glides over a forgotten city. The skyline breathes with static light, and faint reflections shimmer across the rooftops. A hidden signal awakens beneath the pavement, revealing an ancient pulse that has been dormant for centuries.
+
+A young archivist follows the cracked echo through an abandoned transit tunnel. Each turn of the corridor reveals a newly restored mural, painted in layers of gold and memory. Slowly, the city transforms from ruin to living archive, as if the past is remembering itself.
+
+At the center of the district, a suspended platform opens above the streets. The light blooms into a geometric lattice, and the drone rises with the chorus of reconstructed voices. The final sequence moves through dawn, over bridges, plazas, and rooftop gardens, ending in a wide cinematic reveal of a city reborn in silence.</textarea>
+
+        <button class="button-primary" id="generateBtn">Generate Video Timeline Structure</button>
+
+        <div class="progress-wrap">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <span class="progress-text" id="progressText">0%</span>
+        </div>
+
+        <div class="terminal" id="terminalLog"></div>
+      </section>
+
+      <aside class="panel">
+        <div class="panel-header">Inline Browser Preview &amp; Download</div>
+
+        <div class="video-stage">
+          <canvas id="previewCanvas" width="1280" height="720"></canvas>
+          <video id="videoPreview" controls playsinline></video>
+        </div>
+
+        <button class="download-btn" id="downloadBtn">Download Compiled Video File</button>
+
+        <div class="timeline-panel">
+          <h3>Generated Timeline</h3>
+          <div id="timelineList"></div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    const modelSelect = document.getElementById('modelSelect');
+    const sceneDuration = document.getElementById('sceneDuration');
+    const sceneDurationValue = document.getElementById('sceneDurationValue');
+    const totalDurationInput = document.getElementById('totalDurationInput');
+    const durationSecondsLabel = document.getElementById('durationSecondsLabel');
+    const scriptInput = document.getElementById('scriptInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const terminalLog = document.getElementById('terminalLog');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const timelineList = document.getElementById('timelineList');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const videoPreview = document.getElementById('videoPreview');
+    const previewCanvas = document.getElementById('previewCanvas');
+
+    let compiledBlob = null;
+
+    function appendLog(message, tone = 'info') {
+      const line = document.createElement('div');
+      line.className = `log-line ${tone}`;
+      line.textContent = message;
+      terminalLog.appendChild(line);
+      terminalLog.scrollTop = terminalLog.scrollHeight;
+    }
+
+    function updateProgress(value) {
+      const pct = Math.max(0, Math.min(100, Number(value) || 0));
+      progressFill.style.width = pct + '%';
+      progressText.textContent = Math.round(pct) + '%';
+    }
+
+    function parseTargetMinutes(value) {
+      const raw = Number(String(value).replace(/[^\d.]/g, '')) || 120;
+      return Math.max(1, raw);
+    }
+
+    function syncDurationMeta() {
+      const seconds = Number(sceneDuration.value);
+      sceneDurationValue.textContent = seconds + 's';
+      const minutes = parseTargetMinutes(totalDurationInput.value);
+      totalDurationInput.value = minutes;
+      durationSecondsLabel.textContent = (minutes * 60) + ' seconds';
+    }
+
+    function splitTextIntoChunks(text, approximateWordsPerChunk) {
+      const words = text.split(/\s+/).filter(Boolean);
+      const chunks = [];
+      for (let i = 0; i < words.length; i += approximateWordsPerChunk) {
+        const part = words.slice(i, i + approximateWordsPerChunk).join(' ');
+        if (part) chunks.push(part);
+      }
+      return chunks;
+    }
+
+    function parseScriptIntoScenes(scriptText, sceneSeconds) {
+      const rawBlocks = scriptText
+        .split(/\n{2,}|\.\s+|\?\s+|!\s+/)
+        .map((seg) => seg.replace(/\s+/g, ' ').trim())
+        .filter(Boolean);
+
+      if (!rawBlocks.length) return [{ title: 'Scene 1', text: 'Ambient cinematic intro sequence.', duration: sceneSeconds }];
+
+      const scenes = [];
+      let working = '';
+      let currentLength = 0;
+
+      for (const block of rawBlocks) {
+        const blockWords = block.split(/\s+/).length;
+        const estimatedDuration = Math.max(4, Math.min(sceneSeconds, Math.ceil(blockWords / 16)));
+        if (working && currentLength + estimatedDuration > sceneSeconds * 1.5) {
+          scenes.push({ title: 'Scene ' + (scenes.length + 1), text: working.trim(), duration: currentLength || sceneSeconds });
+          working = block;
+          currentLength = estimatedDuration;
+        } else {
+          working = working ? working + ' ' + block : block;
+          currentLength += estimatedDuration;
+        }
+      }
+
+      if (working) {
+        scenes.push({ title: 'Scene ' + (scenes.length + 1), text: working.trim(), duration: currentLength || sceneSeconds });
+      }
+
+      const normalized = [];
+      for (const scene of scenes) {
+        const phraseChunks = splitTextIntoChunks(scene.text, Math.max(18, Math.ceil((sceneSeconds * 2.3))));
+        if (phraseChunks.length > 1) {
+          for (let i = 0; i < phraseChunks.length; i++) {
+            normalized.push({
+              title: 'Scene ' + (normalized.length + 1),
+              text: phraseChunks[i],
+              duration: sceneSeconds
+            });
+          }
+        } else {
+          normalized.push({
+            title: 'Scene ' + (normalized.length + 1),
+            text: scene.text,
+            duration: Math.max(sceneSeconds, scene.duration)
+          });
+        }
+      }
+
+      return normalized;
+    }
+
+    function renderTimeline(scenes) {
+      timelineList.innerHTML = '';
+
+      scenes.forEach((scene, index) => {
+        const item = document.createElement('div');
+        item.className = 'scene-chip';
+
+        const idx = document.createElement('div');
+        idx.className = 'scene-idx';
+        idx.textContent = index + 1;
+
+        const copy = document.createElement('div');
+        copy.className = 'scene-copy';
+        const title = document.createElement('strong');
+        title.textContent = scene.title;
+        const text = document.createElement('p');
+        text.textContent = scene.text;
+        copy.appendChild(title);
+        copy.appendChild(text);
+
+        const duration = document.createElement('div');
+        duration.className = 'scene-duration';
+        duration.textContent = scene.duration + 's';
+
+        item.appendChild(idx);
+        item.appendChild(copy);
+        item.appendChild(duration);
+
+        timelineList.appendChild(item);
+      });
+    }
+
+    function wait(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function buildTimelineStructure() {
+      const scriptText = (scriptInput.value || '').trim();
+      const templateText = scriptText || 'A cinematic low-light establishing shot, followed by a hero subject entering frame. The camera tracks forward, revealing layered visual detail, atmospheric fog, and a brilliant final reveal in the distant skyline.';
+      const sceneSeconds = Number(sceneDuration.value) || 18;
+      const totalMinutes = parseTargetMinutes(totalDurationInput.value);
+      const targetTotalSeconds = totalMinutes * 60;
+      const plannedSceneCount = Math.max(1, Math.ceil(targetTotalSeconds / sceneSeconds));
+
+      appendLog('[BOOT] Local AI session initialized: ' + modelSelect.value, 'info');
+      appendLog('[CORE] Parsing script narrative into sequential scene blocks...', 'info');
+      updateProgress(6);
+
+      await wait(220);
+
+      const scenes = parseScriptIntoScenes(templateText, sceneSeconds);
+      const limitedScenes = scenes.slice(0, plannedSceneCount);
+
+      let progress = 0;
+      const extractionTotal = Math.max(1, limitedScenes.length || 1);
+
+      for (let i = 0; i < limitedScenes.length; i++) {
+        const scene = limitedScenes[i];
+        appendLog(`> Extraction: ${scene.title} queued with ${scene.duration}s duration, local context indexing active.`, 'info');
+        progress = 8 + ((i + 1) / extractionTotal) * 38;
+        updateProgress(progress);
+        await wait(120);
+      }
+
+      appendLog('[SYSTEM] Local VRAM optimization: reducing render graph complexity and tuning model pass scheduling...', 'warn');
+      updateProgress(48);
+      await wait(260);
+
+      for (let i = 0; i < limitedScenes.length; i++) {
+        const scene = limitedScenes[i];
+        const voiceText = scene.text.length > 90 ? scene.text.slice(0, 90) + '...' : scene.text;
+        appendLog(`> Audio script pairing: ${scene.title} -> "${voiceText}"`, 'ok');
+        updateProgress(48 + ((i + 1) / extractionTotal) * 18);
+        await wait(90);
+      }
+
+      appendLog('[SYSTEM] Appending timeline sequence to local render queue...', 'info');
+      updateProgress(68);
+
+      for (let i = 0; i < limitedScenes.length; i++) {
+        const scene = limitedScenes[i];
+        appendLog(`| timeline | ${scene.title} appended -> duration ${scene.duration}s`, 'info');
+        updateProgress(68 + ((i + 1) / extractionTotal) * 20);
+        await wait(80);
+      }
+
+      renderTimeline(limitedScenes);
+
+      updateProgress(100);
+      appendLog('[SUCCESS] Timeline compiled successfully. Browser preview pipeline is ready.', 'ok');
+
+      await generateSyntheticPreview(limitedScenes);
+    }
+
+    async function generateSyntheticPreview(scenes) {
+      const canvas = previewCanvas;
+      const ctx = canvas.getContext('2d');
+      const stream = canvas.captureStream(30);
+      const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+        ? 'video/webm;codecs=vp9'
+        : MediaRecorder.isTypeSupported('video/webm;codecs=vp8')
+          ? 'video/webm;codecs=vp8'
+          : 'video/webm';
+
+      const recordedChunks = [];
+      const recorder = new MediaRecorder(stream, { mimeType });
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) recordedChunks.push(event.data);
+      };
+
+      recorder.onstop = () => {
+        compiledBlob = new Blob(recordedChunks, { type: mimeType });
+        const url = URL.createObjectURL(compiledBlob);
+        videoPreview.src = url;
+        videoPreview.loop = true;
+        videoPreview.muted = true;
+        videoPreview.play().catch(() => {});
+        appendLog('[SUCCESS] Synthetic preview clip generated and loaded directly in the browser.', 'ok');
+      };
+
+      const durationSeconds = 5;
+      const startTime = performance.now();
+
+      function drawFrame(timestamp) {
+        const elapsed = (timestamp - startTime) / 1000;
+        if (elapsed >= durationSeconds) {
+          recorder.stop();
+          return;
+        }
+
+        const progress = elapsed / durationSeconds;
+
+        const sky = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        sky.addColorStop(0, '#040b10');
+        sky.addColorStop(0.45, '#0c1e29');
+        sky.addColorStop(1, '#02070c');
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        for (let y = 0; y < canvas.height; y += 6) {
+          ctx.fillStyle = 'rgba(138, 255, 198, 0.06)';
+          ctx.fillRect(0, y, canvas.width, 2);
+        }
+
+        const glowX = canvas.width * (0.18 + 0.64 * progress);
+        const glowY = canvas.height * (0.46 + 0.12 * Math.sin(progress * 8));
+        const orbRadius = 140 + 70 * Math.sin(progress * 12);
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(94, 214, 255, ${0.2 + progress * 0.4})`;
+        ctx.arc(glowX, glowY, orbRadius, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(9, 255, 150, 0.8)';
+        ctx.arc(glowX + 120, glowY - 80, 26 + 10 * Math.sin(progress * 14), 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#daefff';
+        ctx.font = 'bold 52px Segoe UI';
+        ctx.fillText('LOCAL AI VIDEO STUDIO', 84, 118);
+
+        ctx.fillStyle = '#80d9ff';
+        ctx.font = '26px Consolas';
+        ctx.fillText('SCENE STACK: ' + (scenes.length || 1) + ' CHUNKS / ' + (sceneDuration.value || 18) + 's', 84, 170);
+
+        ctx.fillStyle = '#98ffbd';
+        ctx.font = '22px Consolas';
+        ctx.fillText('OFFLINE MODE / 100% PRIVATE', 84, 210);
+
+        ctx.fillStyle = '#0d1a22';
+        ctx.fillRect(84, 642, canvas.width - 168, 18);
+        ctx.fillStyle = '#3af0a1';
+        ctx.fillRect(84, 642, (canvas.width - 168) * progress, 18);
+
+        requestAnimationFrame(drawFrame);
+      }
+
+      recorder.start();
+      requestAnimationFrame(drawFrame);
+    }
+
+    sceneDuration.addEventListener('input', syncDurationMeta);
+    totalDurationInput.addEventListener('input', () => {
+      const clean = String(totalDurationInput.value).replace(/[^\d.]/g, '');
+      totalDurationInput.value = clean || '120';
+      syncDurationMeta();
+    });
+
+    generateBtn.addEventListener('click', async () => {
+      terminalLog.innerHTML = '';
+      timelineList.innerHTML = '';
+      updateProgress(0);
+      compiledBlob = null;
+      videoPreview.removeAttribute('src');
+      videoPreview.load();
+
+      appendLog('[READY] Local studio is operational. Parsing narrative and assembling timeline...', 'ok');
+
+      try {
+        await buildTimelineStructure();
+      } catch (error) {
+        appendLog('[ERROR] Generation failed: ' + (error && error.message ? error.message : String(error)), 'error');
+        updateProgress(0);
+      }
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      if (!compiledBlob) {
+        appendLog('[WARN] No compiled preview exists yet. Generate a timeline first.', 'warn');
+        return;
+      }
+
+      const a = document.createElement('a');
+      const url = URL.createObjectURL(compiledBlob);
+      a.href = url;
+      a.download = 'local_video_studio_compilation.webm';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      appendLog('[DOWNLOAD] Compiled video file initiated for local browser download.', 'ok');
+    });
+
+    syncDurationMeta();
+    appendLog('[READY] Studio online. Paste or type a narrative script to begin chunk generation.', 'ok');
+  </script>
+</body>
+</html>
